@@ -11,6 +11,7 @@
 import numpy as np
 import tensorflow as tf
 import pickle
+import random
 
 
 filename = 'glove.6B.100d.txt'
@@ -44,11 +45,13 @@ embd.append(np.zeros(word_vec_dim,np.float32))
 embedding = np.asarray(embd)
 embedding = embedding.astype(np.float32)
 
+
 def word2vec(word):  # converts a given word into its vector representation
     if word in vocab:
         return embedding[vocab.index(word)]
     else:
         return embedding[vocab.index('<UNK>')]
+
 
 def most_similar_eucli(x):
     xminusy = np.subtract(embedding,x)
@@ -63,8 +66,7 @@ def vec2word(vec):   # converts a given vector representation into the represent
     return vocab[most_similars[0]]
 
 
-
-with open ('embeddingPICKLE', 'rb') as fp:
+with open('embeddingPICKLE', 'rb') as fp:
     processed_data = pickle.load(fp)
 
 fact_stories = processed_data[0]
@@ -77,8 +79,6 @@ test_answers = np.reshape(processed_data[5],(len(processed_data[5])))
 
 # In[2]:
 
-
-import random
 
 print("EXAMPLE DATA:\n")
 
@@ -117,7 +117,8 @@ val_answers = answers[train_len:(train_len+val_len)]
 
 # ### SENTENCE READING LAYER IMPLEMENTED BEFOREHAND 
 # 
-# Positionally encode the word vectors in each sentence, and combine all the words in the sentence to create a fixed sized vector representation for the sentence.
+# Positionally encode the word vectors in each sentence, and combine all the words in the sentence to create a
+# fixed sized vector representation for the sentence.
 # 
 # "sentence embedding"
 
@@ -152,9 +153,7 @@ def sentence_reader(fact_stories): #positional_encoder
 train_fact_stories = sentence_reader(train_fact_stories)
 val_fact_stories = sentence_reader(val_fact_stories)
 test_fact_stories = sentence_reader(test_fact_stories)
-                
-        
-
+                       
 
 # ### Function to create randomized batches
 
@@ -188,13 +187,14 @@ def create_batches(fact_stories,questions,answers,batch_size):
         
         batch_questions = np.asarray(batch_questions,np.float32)
         batch_questions = np.transpose(batch_questions,[1,0,2])
-        #result = question_length x batch_size x fact sentence size x word vector size
+
+        # result = question_length x batch_size x fact sentence size x word vector size
         
         batches_fact_stories.append(batch_fact_stories)
         batches_questions.append(batch_questions)
         batches_answers.append(batch_answers)
         
-        i+=batch_size
+        i += batch_size
         
     batches_fact_stories = np.asarray(batches_fact_stories,np.float32)
     batches_questions = np.asarray(batches_questions,np.float32)
@@ -208,7 +208,6 @@ def create_batches(fact_stories,questions,answers,batch_size):
 # In[6]:
 
 
-
 # Tensorflow placeholders
 
 tf_facts = tf.placeholder(tf.float32, [None,None,word_vec_dim])
@@ -216,12 +215,12 @@ tf_questions = tf.placeholder(tf.float32, [None,None,word_vec_dim])
 tf_answers = tf.placeholder(tf.int32,[None])
 keep_prob = tf.placeholder(tf.float32)
 
-#hyperparameters
+# hyperparameters
 epochs = 100
 learning_rate = 0.001
 hidden_size = 100
 passes = 3
-beta = 0.0005 #l2 regularization scale
+beta = 0.0005  # l2 regularization scale
 
 
 # ### All the trainable parameters initialized here
@@ -356,7 +355,7 @@ for i in range(passes):
                     initializer=tf.contrib.layers.xavier_initializer(),
                     regularizer=regularizer))
     bt.append(tf.get_variable("bt"+str(i), shape=[hidden_size],
-                     initializer=tf.zeros_initializer()))
+                    initializer=tf.zeros_initializer()))
 
 
 # ANSWER MODULE PARAMETERS
@@ -596,7 +595,7 @@ with tf.Session() as sess: # Start Tensorflow Session
     
     saver = tf.train.Saver() 
 
-    sess.run(init) #initialize all variables
+    sess.run(init)  # initialize all variables
     step = 1   
     loss_list=[]
     acc_list=[]
