@@ -13,6 +13,9 @@ import tensorflow as tf
 import pickle
 import random
 
+import h5py
+import matplotlib.pyplot as plt
+
 
 filename = 'glove.6B.100d.txt'
 
@@ -153,7 +156,7 @@ def sentence_reader(fact_stories): #positional_encoder
 train_fact_stories = sentence_reader(train_fact_stories)
 val_fact_stories = sentence_reader(val_fact_stories)
 test_fact_stories = sentence_reader(test_fact_stories)
-                       
+
 
 # ### Function to create randomized batches
 
@@ -234,115 +237,115 @@ beta = 0.0005  # l2 regularization scale
 
 regularizer = tf.contrib.layers.l2_regularizer(scale=beta)
 
-wzf = tf.get_variable("wzf", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wzf = tf.Variable(name="wzf", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer= regularizer)
-uzf = tf.get_variable("uzf", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+uzf = tf.Variable(name="uzf", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-bzf = tf.get_variable("bzf", shape=[hidden_size],initializer=tf.zeros_initializer())
+bzf = tf.Variable(name="bzf", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wrf = tf.get_variable("wrf", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wrf = tf.Variable(name="wrf", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-urf = tf.get_variable("urf", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+urf = tf.Variable(name="urf", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-brf = tf.get_variable("brf", shape=[hidden_size],initializer=tf.zeros_initializer())
+brf = tf.Variable(name="brf", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wf = tf.get_variable("wf", shape=[word_vec_dim, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+wf = tf.Variable(name="wf", shape=[word_vec_dim, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-uf = tf.get_variable("uf", shape=[hidden_size, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+uf = tf.Variable(name="uf", shape=[hidden_size, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-bf = tf.get_variable("bf", shape=[hidden_size],initializer=tf.zeros_initializer())
+bf = tf.Variable(name="bf", shape=[hidden_size],initializer=tf.zeros_initializer())
 
 # BACKWARD GRU PARAMETERS FOR INPUT MODULE
 
-wzb = tf.get_variable("wzb", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wzb = tf.Variable(name="wzb", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-uzb = tf.get_variable("uzb", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+uzb = tf.Variable(name="uzb", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-bzb = tf.get_variable("bzb", shape=[hidden_size],initializer=tf.zeros_initializer())
+bzb = tf.Variable(name="bzb", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wrb = tf.get_variable("wrb", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wrb = tf.Variable(name="wrb", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-urb = tf.get_variable("urb", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+urb = tf.Variable(name="urb", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-brb = tf.get_variable("brb", shape=[hidden_size],initializer=tf.zeros_initializer())
+brb = tf.Variable(name="brb", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wb = tf.get_variable("wb", shape=[word_vec_dim, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+wb = tf.Variable(name="wb", shape=[word_vec_dim, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-ub = tf.get_variable("ub", shape=[hidden_size, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+ub = tf.Variable(name="ub", shape=[hidden_size, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-bb = tf.get_variable("bb", shape=[hidden_size],initializer=tf.zeros_initializer())
+bb = tf.Variable(name="bb", shape=[hidden_size],initializer=tf.zeros_initializer())
 
 
 # GRU PARAMETERS FOR QUESTION MODULE (TO ENCODE THE QUESTIONS)
 
-wzq = tf.get_variable("wzq", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wzq = tf.Variable(name="wzq", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-uzq = tf.get_variable("uzq", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+uzq = tf.Variable(name="uzq", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-bzq = tf.get_variable("bzq", shape=[hidden_size],initializer=tf.zeros_initializer())
+bzq = tf.Variable(name="bzq", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wrq = tf.get_variable("wrq", shape=[word_vec_dim, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+wrq = tf.Variable(name="wrq", shape=[word_vec_dim, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-urq = tf.get_variable("urq", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+urq = tf.Variable(name="urq", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                       regularizer=regularizer)
-brq = tf.get_variable("brq", shape=[hidden_size],initializer=tf.zeros_initializer())
+brq = tf.Variable(name="brq", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-wq = tf.get_variable("wq", shape=[word_vec_dim, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+wq = tf.Variable(name="wq", shape=[word_vec_dim, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-uq = tf.get_variable("uq", shape=[hidden_size, hidden_size],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+uq = tf.Variable(name="uq", shape=[hidden_size, hidden_size],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-bq = tf.get_variable("bq", shape=[hidden_size],initializer=tf.zeros_initializer())
+bq = tf.Variable(name="bq", shape=[hidden_size],initializer=tf.zeros_initializer())
 
 
 # EPISODIC MEMORY
 
 inter_neurons = 1024
 
-w1 = tf.get_variable("w1", shape=[hidden_size*4, inter_neurons],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+w1 = tf.Variable(name="w1", shape=[hidden_size*4, inter_neurons],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-b1 = tf.get_variable("b1", shape=[inter_neurons],
+b1 = tf.Variable(name="b1", shape=[inter_neurons],
                      initializer=tf.zeros_initializer())
-w2 = tf.get_variable("w2", shape=[inter_neurons,1],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+w2 = tf.Variable(name="w2", shape=[inter_neurons,1],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-b2 = tf.get_variable("b2", shape=[1],initializer=tf.zeros_initializer())
+b2 = tf.Variable(name="b2", shape=[1],initializer=tf.zeros_initializer())
 
 # ATTENTION BASED GRU PARAMETERS
 
-wratt = tf.get_variable("wratt", shape=[hidden_size,hidden_size],
-                        initializer=tf.contrib.layers.xavier_initializer(),
+wratt = tf.Variable(name="wratt", shape=[hidden_size,hidden_size],
+                        initializer=tf.initializers.GlorotUniform(),
                         regularizer=regularizer)
-uratt = tf.get_variable("uratt", shape=[hidden_size,hidden_size],
-                        initializer=tf.contrib.layers.xavier_initializer(),
+uratt = tf.Variable(name="uratt", shape=[hidden_size,hidden_size],
+                        initializer=tf.initializers.GlorotUniform(),
                         regularizer=regularizer)
-bratt = tf.get_variable("bratt", shape=[hidden_size],initializer=tf.zeros_initializer())
+bratt = tf.Variable(name="bratt", shape=[hidden_size],initializer=tf.zeros_initializer())
 
-watt = tf.get_variable("watt", shape=[hidden_size,hidden_size],
-                       initializer=tf.contrib.layers.xavier_initializer(),
+watt = tf.Variable(name="watt", shape=[hidden_size,hidden_size],
+                       initializer=tf.initializers.GlorotUniform(),
                        regularizer=regularizer)
-uatt = tf.get_variable("uatt", shape=[hidden_size, hidden_size],
-                      initializer=tf.contrib.layers.xavier_initializer(),
+uatt = tf.Variable(name="uatt", shape=[hidden_size, hidden_size],
+                      initializer=tf.initializers.GlorotUniform(),
                        regularizer=regularizer)
-batt = tf.get_variable("batt", shape=[hidden_size],initializer=tf.zeros_initializer())
+batt = tf.Variable(name="batt", shape=[hidden_size],initializer=tf.zeros_initializer())
 
 
 # MEMORY UPDATE PARAMETERS
@@ -351,10 +354,10 @@ wt = []
 bt = []
 
 for i in range(passes):
-    wt.append(tf.get_variable("wt"+str(i), shape=[hidden_size*3,hidden_size],
-                    initializer=tf.contrib.layers.xavier_initializer(),
+    wt.append(tf.Variable(name="wt"+str(i), shape=[hidden_size*3,hidden_size],
+                    initializer=tf.initializers.GlorotUniform(),
                     regularizer=regularizer))
-    bt.append(tf.get_variable("bt"+str(i), shape=[hidden_size],
+    bt.append(tf.Variable(name="bt"+str(i), shape=[hidden_size],
                     initializer=tf.zeros_initializer()))
 
 
@@ -362,10 +365,10 @@ for i in range(passes):
 
 # GRU PARAMETERS FOR ANSWER MODULE
 
-wa_pd = tf.get_variable("wa_pd", shape=[hidden_size*2,len(vocab)],
-                     initializer=tf.contrib.layers.xavier_initializer(),
+wa_pd = tf.Variable(name="wa_pd", shape=[hidden_size*2,len(vocab)],
+                     initializer=tf.initializers.GlorotUniform(),
                      regularizer=regularizer)
-ba_pd = tf.get_variable("ba_pd", shape=[len(vocab)],
+ba_pd = tf.Variable(name="ba_pd", shape=[len(vocab)],
                      initializer=tf.zeros_initializer())
 
 
@@ -583,7 +586,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 prediction = tf.argmax(model_output,1)
 
 # Initializing the variables
-init = tf.global_variables_initializer()
+# init = tf.global_variables_initializer() - incompatiblel with TF2
 
 
 # ### Training....
@@ -705,9 +708,7 @@ file.close()
 # In[14]:
 
 
-import h5py
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 # get_ipython().magic(u'matplotlib inline')
 
